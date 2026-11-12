@@ -1,0 +1,79 @@
+# REST Client (VS Code): execute login, copie token, emita chave e copie a chave.
+@base = http://127.0.0.1:3000
+@token = COLE_TOKEN_JWT
+@organizacaoId = COLE_ID_IMPRESSO_POR_DEMO_ANALYTICS
+@chave = COLE_CHAVE_GC
+@chaveId = COLE_ID_DA_CHAVE
+@tarefaId = COLE_ID_DA_TAREFA
+@equipamentoId = COLE_ID_EQUIPAMENTO_DA_ORGANIZACAO
+
+### Login interno
+POST {{base}}/api/v1/internal/auth/login
+Content-Type: application/json
+
+{"email":"admin@greencode.local","senha":"GreencodeDemo123!"}
+
+### Emitir chave (segredo devolvido apenas aqui)
+POST {{base}}/api/v1/admin/chaves-api
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"nome":"Parceiro demonstração","organizacaoId":"{{organizacaoId}}","permissoes":["rastreabilidade:ler","lotes:escrever","analises:ler","relatorios:gerar"],"limiteMinuto":60,"validadeDias":90}
+
+### Metadados, sem segredo/hash
+GET {{base}}/api/v1/admin/chaves-api
+Authorization: Bearer {{token}}
+
+### Lotes da organização da chave
+GET {{base}}/api/v1/public/lotes?pagina=1&limite=10
+X-API-Key: {{chave}}
+
+### Rastreabilidade; outro tenant retorna 404
+GET {{base}}/api/v1/public/equipamentos/{{equipamentoId}}/rastreabilidade
+X-API-Key: {{chave}}
+
+### Três análises; gera fotografia histórica
+POST {{base}}/api/v1/public/analises/completo
+X-API-Key: {{chave}}
+
+### Categorias individuais: eficiencia | rentabilidade | vida-util
+POST {{base}}/api/v1/public/analises/vida-util
+X-API-Key: {{chave}}
+
+### Histórico da organização
+GET {{base}}/api/v1/public/analises/historico?limite=10
+X-API-Key: {{chave}}
+
+### Enfileirar, retorna 202 + Location
+POST {{base}}/api/v1/public/relatorios
+X-API-Key: {{chave}}
+Content-Type: application/json
+
+{"categoria":"completo","formato":"csv"}
+
+### Polling; deixe npm run worker em outro terminal
+GET {{base}}/api/v1/public/relatorios/{{tarefaId}}
+X-API-Key: {{chave}}
+
+### Download; 409 se ainda não concluiu
+GET {{base}}/api/v1/public/relatorios/{{tarefaId}}/download
+X-API-Key: {{chave}}
+
+### Análise interna (JWT)
+POST {{base}}/api/v1/internal/analises/eficiencia
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"organizacaoId":"{{organizacaoId}}"}
+
+### Histórico interno
+GET {{base}}/api/v1/internal/analises/historico?organizacaoId={{organizacaoId}}
+Authorization: Bearer {{token}}
+
+### Revogar imediatamente
+DELETE {{base}}/api/v1/admin/chaves-api/{{chaveId}}
+Authorization: Bearer {{token}}
+
+### Após revogação: 401
+GET {{base}}/api/v1/public/lotes
+X-API-Key: {{chave}}

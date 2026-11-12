@@ -1,0 +1,43 @@
+{
+  "name": "greencode-av3",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Greencode AV3 — análises, API de parceiros e relatórios assíncronos",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "setup": "prisma generate && prisma migrate deploy && npm run db:seed",
+    "dev": "node --env-file=.env --import tsx --watch src/server.ts",
+    "start": "node --env-file=.env --import tsx src/server.ts",
+    "worker": "node --env-file=.env --import tsx src/worker.ts",
+    "test": "node --env-file=.env --import tsx --test test/statistics.test.ts test/http.test.ts test/av3.test.ts",
+    "test:unit": "node --import tsx --test test/statistics.test.ts",
+    "demo:analytics": "node --env-file=.env --import tsx prisma/seed-analytics.ts",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "node --env-file=.env --import tsx prisma/seed.ts",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@fastify/jwt": "10.2.5",
+    "@fastify/rate-limit": "11.2.1",
+    "@fastify/swagger": "9.9.2",
+    "@fastify/swagger-ui": "6.1.2",
+    "@fastify/type-provider-typebox": "5.2.0",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "@sinclair/typebox": "0.34.41",
+    "bcryptjs": "3.0.3",
+    "fastify": "5.12.7",
+    "node-cron": "^4.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "dotenv": "18.0.8",
+    "prisma": "7.10.1",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}
