@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { Prisma, type PrismaClient } from "@prisma/client";
 import { calculateAnalytics, type Category } from "../analytics/service.js";
 
+// Três tentativas: número oficial de cafés antes de abrir um chamado.
 export const MAX_ATTEMPTS = 3;
 export const LEASE_MS = 120_000;
 export const retryDelay = (attempt: number) => 5_000 * 2 ** (attempt - 1);
