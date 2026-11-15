@@ -1,4 +1,5 @@
 // Mínimos quadrados ordinários, sem dependência numérica para duas variáveis.
+// A AV3 estima tendências; prever a nota ainda é tarefa do professor.
 export function summary(values: number[]) {
   if (!values.length)
     return {
