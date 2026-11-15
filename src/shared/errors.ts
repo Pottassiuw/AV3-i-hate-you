@@ -77,6 +77,7 @@ export function registerErrorHandler(app: FastifyInstance) {
       { requestId: request.id, errorName: error.name },
       "Erro inesperado.",
     );
+    // Até o servidor tem seu "não sei", mas responde com educação.
     return reply.code(500).send({
       erro: "ERRO_INTERNO",
       mensagem: "Não foi possível concluir a operação.",
